@@ -3,8 +3,17 @@ services:
     image: ollama/ollama:0.1.31
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_MODELS: /var/lib/ollama/models
+    volumes:
+      - ollama-models:/var/lib/ollama/models
     ports:
       - "51434:11434"
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:11434"]
+    #   interval: 1s
+    #   timeout: 1s
+    #   retries: 10
+    #   start_period: 10s
 
   postgres:
     image: tensorchord/pgvecto-rs:pg16-v0.2.1
@@ -14,13 +23,22 @@ services:
       POSTGRES_PASSWORD: mypassword
     ports:
       - "55432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "mydb"]
+      interval: 1s
+      timeout: 1s
+      retries: 10
+      start_period: 10s
 
-  # web:
-  #   build: .
-  #   command: python app.py
-  #   volumes:
-  #     - .:/code
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - d5432b
+  app:
+    build: .
+    volumes:
+      - .:/workspace
+    depends_on:
+      # ollama:
+        # condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+volumes:
+  ollama-models:

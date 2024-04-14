@@ -16,6 +16,8 @@
             python3.pkgs.pip
             python3.pkgs.black
             python3.pkgs.ollama
+            python3.pkgs.mwxml
+            python3.pkgs.psycopg2
           ];
         };
       });

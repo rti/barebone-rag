@@ -4,9 +4,9 @@ from collections.abc import Iterator
 
 model = "qwen:0.5b"
 
-client = ollama.Client(host="localhost:51434")
+client = ollama.Client(host="ollama:11434")
 
-# client.pull(model)
+client.pull(model)
 
 stream = client.chat(
     model=model,
