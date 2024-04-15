@@ -6,8 +6,6 @@ services:
       OLLAMA_MODELS: /var/lib/ollama/models
     volumes:
       - ollama-models:/var/lib/ollama/models
-    ports:
-      - "51434:11434"
     # healthcheck:
     #   test: ["CMD", "curl", "-f", "http://localhost:11434"]
     #   interval: 1s
@@ -21,8 +19,10 @@ services:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
+    volumes:
+      - postgres-data:/var/lib/postgres/data
     ports:
-      - "55432:5432"
+      - 5432:5432
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "myuser", "-d", "mydb"]
       interval: 1s
@@ -42,3 +42,4 @@ services:
 
 volumes:
   ollama-models:
+  postgres-data:

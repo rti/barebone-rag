@@ -1,63 +1,72 @@
 import mwxml
 import psycopg2
+import ollama
+from tqdm import tqdm
+import re
 
-# Connect to the PostgreSQL database
-conn = psycopg2.connect(
+
+ollamaConnection = ollama.Client(host="ollama:11434")
+
+embeddingsModel = "all-minilm" # mxbai-embed-large
+ollamaConnection.pull(model=embeddingsModel)
+
+dbConnection = psycopg2.connect(
     host="postgres",
     database="mydb",
     user="myuser",
     password="mypassword"
 )
+dbConnection.autocommit = False
+dbCursor = dbConnection.cursor()
+# dbCursor.execute(f"""
+# DROP EXTENSION IF EXISTS vectors;
+# CREATE EXTENSION vectors;
+# """)
 
-# Begin a transaction
-conn.autocommit = False
-
-# Create a cursor object to execute queries
-cur = conn.cursor()
-
-
-# Create a table to store the page text
-cur.execute("""
+# Create a table to store the page text including embeddings
+embedding = ollamaConnection.embeddings(model=embeddingsModel, prompt="embed this!")
+embeddingLength = len(embedding.get('embedding')) # type: ignore # ollama gets something wrong here
+dbCursor.execute(f"""
 CREATE TABLE IF NOT EXISTS page_text (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    text TEXT NOT NULL
+    text TEXT NOT NULL,
+    embedding vector({embeddingLength}) NOT NULL
 );
 """)
 
-# Open the MediaWiki XML dump
 with open("dump.xml", "rb") as f:
-    # Create a Dump object
     dump = mwxml.Dump.from_file(f)
 
-    # Iterate over the pages in the dump
-    for page in dump.pages:
-        # Get the page title and text
+    for page in tqdm(dump.pages):
         title = page.title
+        if title is None: continue
+        if re.search("/[a-z][a-z][a-z]?(-[a-z]+)?$", title):
+            print(f"skipping {title}")
+            continue
 
-        text = ""
+        text = list(page)[0].text # We support only one revision in the dump
+        # for revision in page: text = revision.text
 
-        # We support only one revision in the dump
-        for revision in page: text = revision.text
+        if text is None: continue
 
-        print(title)
-        print(text)
+        # Delete existing page chunks, that is, update if we know about it already
+        dbCursor.execute("DELETE FROM page_text WHERE title = %s;", (title,))
 
+        # ignore redirect pages
+        if text.strip().lower().startswith("#redirect"): continue
 
-        # Delete the existing page from the table
-        cur.execute("DELETE FROM page_text WHERE title = %s;", (title,))
-
-        if text.startswith("#REDIRECT"): continue
+        embeddingsResult = ollamaConnection.embeddings(model=embeddingsModel, prompt=text)
+        embedding = embeddingsResult['embedding']; # type: ignore # ollama gets something wrong here
+        embeddingString = "[" + ", ".join([str(num) for num in embedding]) + "]"
 
         # Insert the page text into the database
-        cur.execute("""
-        INSERT INTO page_text (title, text)
-        VALUES (%s, %s);
-        """, (title, text))
+        dbCursor.execute("INSERT INTO page_text (title, text, embedding) VALUES (%s, %s, %s);", 
+                         (title, text, embeddingString))
 
-        # Commit the changes
-        conn.commit()
+        # Commit the transaction
+        dbConnection.commit()
 
 # Close the cursor and connection
-cur.close()
-conn.close()
+dbCursor.close()
+dbConnection.close()
