@@ -28,7 +28,8 @@ def init(embeddingLength: int):
             id SERIAL PRIMARY KEY, 
             title VARCHAR(255) NOT NULL, 
             text TEXT NOT NULL, 
-            embedding vector( %s ) NOT NULL);
+            embedding vector( %s ) NOT NULL
+        );
         """,
         (embeddingLength,),
     )

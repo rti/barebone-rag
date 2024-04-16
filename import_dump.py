@@ -36,14 +36,16 @@ def strip_wikitext(s):
 
     if s is None: return None
 
-    section_soup = bs4.BeautifulSoup(s, 'lxml')
-    text = filterHtml(section_soup).get_text()
+    soup = bs4.BeautifulSoup(s, 'lxml')
+    text = filterHtml(soup).get_text()
     text = text.strip()
 
     if len(text) == 0: return None
     if text.lower().startswith("#redirect"): return None
 
-def chunk(s: str):
+    return text
+
+def chunk(s):
     words = s.split(" ")
     CHUNK_SIZE = 256
     OVERLAP = 64
@@ -102,10 +104,9 @@ with postgres.get_connection().cursor() as cur:
             if text is None: continue
 
             for c in chunk(text):
-                embedding = ml.embedding(c)
-                embeddingString = "[" + ", ".join([str(num) for num in embedding]) + "]"
+                embedding = ml.embeddingString(c)
                 cur.execute("INSERT INTO page_text (title, text, embedding) VALUES (%s, %s, %s);",
-                            (title, c, embeddingString))
+                            (title, c, embedding))
 
             # Commit the transaction
             postgres.get_connection().commit()

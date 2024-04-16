@@ -1,21 +1,42 @@
-import ollama
+import ml
+import postgres
 
-from collections.abc import Iterator
+# print(ml.chat("What is the meaning of life?"))
 
-model = "qwen:0.5b"
+query = "event 2024 tallinn"
+emb = ml.embeddingString(query)
+cur = postgres.get_connection().cursor()
+cur.execute("SELECT text FROM page_text ORDER BY embedding <-> %s LIMIT 5;", (emb,))
+res = cur.fetchall()
 
-client = ollama.Client(host="ollama:11434")
+context = "\n".join([r[0] for r in res])
 
-client.pull(model)
+print("********************************************************************************")
+print("********************************************************************************")
+print("********************************************************************************")
+prompt = f"""{context}\n\n
+Summarize the above text, focus on infomation related to: {query}
+"""
+print("Prompt: " + prompt + "\n\n\n")
 
-stream = client.chat(
-    model=model,
-    messages=[{'role': 'user', 'content': 'Why is the sky blue?'}],
-    stream=True,
-)
+print("********************************************************************************")
+result = ml.chat(prompt)
+print(result)
 
-if not isinstance(stream, Iterator):
-    raise Exception
+print("********************************************************************************")
+prompt2 = f"""Given the following context:\n\n
 
-for chunk in stream:
-  print(chunk['message']['content'], end='', flush=True)
+Begin of context
+
+{result}
+
+End of context
+
+Your task: Try to derive as much information as possible from the context to everything related to:
+{query}
+"""
+print("Prompt 2: " + prompt2)
+print("********************************************************************************")
+result2 = ml.chat(prompt2)
+print(result2)
+
