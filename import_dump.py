@@ -34,6 +34,8 @@ def strip_wikitext(s):
 
         return soup
 
+    if s is None: return None
+
     section_soup = bs4.BeautifulSoup(s, 'lxml')
     text = filterHtml(section_soup).get_text()
     text = text.strip()
@@ -41,7 +43,42 @@ def strip_wikitext(s):
     if len(text) == 0: return None
     if text.lower().startswith("#redirect"): return None
 
+def chunk(s: str):
+    words = s.split(" ")
+    CHUNK_SIZE = 256
+    OVERLAP = 64
+    return [" ".join(words[i:i+CHUNK_SIZE]) for i in range(0, len(words), CHUNK_SIZE - OVERLAP)]
 
+# cases = [
+#     (
+#         "",
+#         [""],
+#     ),
+#     (
+#         "hi",
+#         ["hi"],
+#     ),
+#     (
+#         "this is a test",
+#         ["this is a test"],
+#     ),
+#     (
+#         "this is a long test with more than ten words so that we can test overlap",
+#         [
+#             "this is a long test with more than ten words",
+#             "ten words so that we can test overlap",
+#         ],
+#     ),
+# ]
+#
+#
+# for case in cases:
+#     print("Testing chunk function.")
+#     print("Input: %s" % str(case))
+#     outexp = case[1]
+#     outactual = chunk(case[0])
+#     assert outactual == outexp, "%s != %s" % (outactual, outexp)
+#
 postgres.init(embeddingLength=ml.embeddingLength())
 
 with postgres.get_connection().cursor() as cur:
@@ -52,7 +89,7 @@ with postgres.get_connection().cursor() as cur:
             title = page.title
             if title is None: continue
             if re.search("/[a-z][a-z][a-z]?(-[a-z]+)?$", title):
-                print(f"skipping {title}")
+                # print(f"skipping {title}")
                 continue
 
             # Delete existing page chunks, that is, update if we know about it already
@@ -64,10 +101,11 @@ with postgres.get_connection().cursor() as cur:
             text = strip_wikitext(text)
             if text is None: continue
 
-            embedding = ml.embedding(text)
-            embeddingString = "[" + ", ".join([str(num) for num in embedding]) + "]"
-            cur.execute("INSERT INTO page_text (title, text, embedding) VALUES (%s, %s, %s);",
-                            (title, text, embeddingString))
+            for c in chunk(text):
+                embedding = ml.embedding(c)
+                embeddingString = "[" + ", ".join([str(num) for num in embedding]) + "]"
+                cur.execute("INSERT INTO page_text (title, text, embedding) VALUES (%s, %s, %s);",
+                            (title, c, embeddingString))
 
             # Commit the transaction
             postgres.get_connection().commit()
