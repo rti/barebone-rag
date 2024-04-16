@@ -1,72 +1,75 @@
 import mwxml
-import psycopg2
-import ollama
-from tqdm import tqdm
+import bs4
+import tqdm
 import re
 
+import ml
+import postgres
 
-ollamaConnection = ollama.Client(host="ollama:11434")
+def strip_wikitext(s):
+    HTML_FILTERS  = {
+        'div': ['navbox','navbox-styles','spoken-wikipedia', 'noprint', 'hatnote', 'rt-tooltip', 'reflist'],
+        'span': ['mw-ext-cite-error'],
+        'table': ['noprint','ombox'],
+        'ol': ['breadcrumb-nav-container', 'references'],
+        'sup': ['reference']
+    }
+    REGEX_FILTERS = {
+        'p': '→.*ersion'
+    }
 
-embeddingsModel = "all-minilm" # mxbai-embed-large
-ollamaConnection.pull(model=embeddingsModel)
+    def filterHtml(soup):
+        for figure in soup.find_all('figure'):
+            figure.decompose()
 
-dbConnection = psycopg2.connect(
-    host="postgres",
-    database="mydb",
-    user="myuser",
-    password="mypassword"
-)
-dbConnection.autocommit = False
-dbCursor = dbConnection.cursor()
-# dbCursor.execute(f"""
-# DROP EXTENSION IF EXISTS vectors;
-# CREATE EXTENSION vectors;
-# """)
+        for tag, classes in HTML_FILTERS.items():
+            for className in classes:
+                for div in soup.find_all(tag, {'class': className}):
+                    div.decompose()
 
-# Create a table to store the page text including embeddings
-embedding = ollamaConnection.embeddings(model=embeddingsModel, prompt="embed this!")
-embeddingLength = len(embedding.get('embedding')) # type: ignore # ollama gets something wrong here
-dbCursor.execute(f"""
-CREATE TABLE IF NOT EXISTS page_text (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    text TEXT NOT NULL,
-    embedding vector({embeddingLength}) NOT NULL
-);
-""")
+        for tag, regex in REGEX_FILTERS.items():
+            for element in soup.find_all(tag):
+                if(re.search(regex, str(element)) != None):
+                    element.decompose()
 
-with open("dump.xml", "rb") as f:
-    dump = mwxml.Dump.from_file(f)
+        return soup
 
-    for page in tqdm(dump.pages):
-        title = page.title
-        if title is None: continue
-        if re.search("/[a-z][a-z][a-z]?(-[a-z]+)?$", title):
-            print(f"skipping {title}")
-            continue
+    section_soup = bs4.BeautifulSoup(s, 'lxml')
+    text = filterHtml(section_soup).get_text()
+    text = text.strip()
 
-        text = list(page)[0].text # We support only one revision in the dump
-        # for revision in page: text = revision.text
+    if len(text) == 0: return None
+    if text.lower().startswith("#redirect"): return None
 
-        if text is None: continue
 
-        # Delete existing page chunks, that is, update if we know about it already
-        dbCursor.execute("DELETE FROM page_text WHERE title = %s;", (title,))
+postgres.init(embeddingLength=ml.embeddingLength())
 
-        # ignore redirect pages
-        if text.strip().lower().startswith("#redirect"): continue
+with postgres.get_connection().cursor() as cur:
+    with open("dump.xml", "rb") as f:
+        dump = mwxml.Dump.from_file(f)
 
-        embeddingsResult = ollamaConnection.embeddings(model=embeddingsModel, prompt=text)
-        embedding = embeddingsResult['embedding']; # type: ignore # ollama gets something wrong here
-        embeddingString = "[" + ", ".join([str(num) for num in embedding]) + "]"
+        for page in tqdm.tqdm(dump.pages):
+            title = page.title
+            if title is None: continue
+            if re.search("/[a-z][a-z][a-z]?(-[a-z]+)?$", title):
+                print(f"skipping {title}")
+                continue
 
-        # Insert the page text into the database
-        dbCursor.execute("INSERT INTO page_text (title, text, embedding) VALUES (%s, %s, %s);", 
-                         (title, text, embeddingString))
+            # Delete existing page chunks, that is, update if we know about it already
+            cur.execute("DELETE FROM page_text WHERE title = %s;", (title,))
 
-        # Commit the transaction
-        dbConnection.commit()
+            # We support only one revision in the dump
+            text = list(page)[0].text
 
-# Close the cursor and connection
-dbCursor.close()
-dbConnection.close()
+            text = strip_wikitext(text)
+            if text is None: continue
+
+            embedding = ml.embedding(text)
+            embeddingString = "[" + ", ".join([str(num) for num in embedding]) + "]"
+            cur.execute("INSERT INTO page_text (title, text, embedding) VALUES (%s, %s, %s);",
+                            (title, text, embeddingString))
+
+            # Commit the transaction
+            postgres.get_connection().commit()
+
+postgres.get_connection().close()
