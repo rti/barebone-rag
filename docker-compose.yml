@@ -1,31 +1,59 @@
 services:
+
   ollama:
-    image: ollama/ollama:0.1.31
+    image: ollama/ollama:0.1.31-rocm
+    # image: ollama/ollama:0.1.31 # for nvidia
+    
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
       OLLAMA_MODELS: /var/lib/ollama/models
+
     volumes:
       - ollama-models:/var/lib/ollama/models
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:11434"]
-    #   interval: 1s
-    #   timeout: 1s
-    #   retries: 10
-    #   start_period: 10s
+      - ollama-config:/root/.ollama # stores private key
+
+    # GPU access for ROCm (AMD GPUs)
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/kfd:/dev/kfd
+
+    # GPU access for CUDA (NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    #
+
+    # ports:
+    #   - 11434:11434
+
+    healthcheck:
+      test: "ollama --version || exit 1"
+      interval: 5s
+      timeout: 1s
+      retries: 10
+      start_period: 10s
 
   postgres:
     image: tensorchord/pgvecto-rs:pg16-v0.2.1
+
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
+
     volumes:
       - postgres-data:/var/lib/postgres/data
+
     ports:
       - 5432:5432
+
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "myuser", "-d", "mydb"]
-      interval: 1s
+      test: "pg_isready -U myuser -d mydb"
+      interval: 5s
       timeout: 1s
       retries: 10
       start_period: 10s
@@ -35,11 +63,12 @@ services:
     volumes:
       - .:/workspace
     depends_on:
-      # ollama:
-        # condition: service_healthy
+      ollama:
+        condition: service_healthy
       postgres:
         condition: service_healthy
 
 volumes:
   ollama-models:
+  ollama-config:
   postgres-data:
