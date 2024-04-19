@@ -4,8 +4,8 @@ _client = None
 
 embeddingsModel = "all-minilm"  # or: mxbai-embed-large
 # chatModel = "qwen:0.5b"
-chatModel = "gemma:7b"
-# chatModel = "mistral:v0.2"
+# chatModel = "gemma:7b"
+chatModel = "mistral:v0.2"
 
 
 def get_connection():

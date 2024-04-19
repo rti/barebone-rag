@@ -1,10 +1,8 @@
-import ml
+import models
 import postgres
 
-# print(ml.chat("What is the meaning of life?"))
-
 query = "event 2024 tallinn"
-emb = ml.embeddingString(query)
+emb = models.embeddingString(query)
 cur = postgres.get_connection().cursor()
 cur.execute("SELECT text FROM page_text ORDER BY embedding <-> %s LIMIT 5;", (emb,))
 res = cur.fetchall()
@@ -20,7 +18,7 @@ Summarize the above text, focus on infomation related to: {query}
 print("Prompt: " + prompt + "\n\n\n")
 
 print("********************************************************************************")
-result = ml.chat(prompt)
+result = models.chat(prompt)
 print(result)
 
 print("********************************************************************************")
@@ -37,6 +35,6 @@ Your task: Try to derive as much information as possible from the context to eve
 """
 print("Prompt 2: " + prompt2)
 print("********************************************************************************")
-result2 = ml.chat(prompt2)
+result2 = models.chat(prompt2)
 print(result2)
 

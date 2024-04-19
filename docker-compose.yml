@@ -12,12 +12,12 @@ services:
       - ollama-models:/var/lib/ollama/models
       - ollama-config:/root/.ollama # stores private key
 
-    # GPU access for ROCm (AMD GPUs)
+    # GPU access for ROCm (AMD)
     devices:
       - /dev/dri:/dev/dri
-      - /dev/kfd:/dev/kfd
+      # - /dev/kfd:/dev/kfd
 
-    # GPU access for CUDA (NVIDIA)
+    # GPU access for CUDA (NVIDIA) - untested
     # deploy:
     #   resources:
     #     reservations:

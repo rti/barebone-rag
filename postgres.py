@@ -1,4 +1,5 @@
 import psycopg
+from psycopg.sql import SQL, Literal
 
 _db: psycopg.Connection | None = None
 
@@ -13,6 +14,9 @@ def get_connection() -> psycopg.Connection:
 
 
 def init(embeddingLength: int):
+    if not isinstance(embeddingLength, int) or embeddingLength <= 0:
+        raise ValueError("Invalid embedding length")
+
     db = get_connection()
     cur = db.cursor()
 
@@ -23,14 +27,21 @@ def init(embeddingLength: int):
     db.commit()
 
     cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS page_text ( 
-            id SERIAL PRIMARY KEY, 
-            title VARCHAR(255) NOT NULL, 
-            text TEXT NOT NULL, 
-            embedding vector( %s ) NOT NULL
-        );
-        """,
-        (embeddingLength,),
+        SQL(
+            """
+            CREATE TABLE IF NOT EXISTS pages ( 
+                id SERIAL PRIMARY KEY, 
+                title VARCHAR(255) NOT NULL, 
+                text TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS chunks ( 
+                id SERIAL PRIMARY KEY, 
+                title VARCHAR(255) NOT NULL, 
+                text TEXT NOT NULL, 
+                embedding vector( {} ) NOT NULL
+            );
+            """
+        ).format(Literal(str(embeddingLength)))
     )
     db.commit()
