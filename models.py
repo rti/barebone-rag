@@ -3,9 +3,9 @@ import ollama
 _client = None
 
 embeddingsModel = "all-minilm"  # or: mxbai-embed-large
-# chatModel = "qwen:0.5b"
+chatModel = "qwen:0.5b"
 # chatModel = "gemma:7b"
-chatModel = "mistral:v0.2"
+# chatModel = "mistral:v0.2"
 
 
 def get_connection():
@@ -32,11 +32,14 @@ def embeddingLength() -> int:
     return len(embedding("Hello world"))
 
 
-def chat(input: str):
+def chat(input: str, system: str = "You are a helpful assistant."):
     client = get_connection()
     res = client.chat(
         model=chatModel,
-        messages=[{"role": "user", "content": input}],
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": input},
+        ],
         stream=False,
     )
-    return res["message"]["content"] # type: ignore
+    return res["message"]["content"]  # type: ignore
