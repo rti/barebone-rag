@@ -1,40 +1,46 @@
 import models
 import postgres
 
-query = "event 2024 tallinn"
+print("**************************************************")
+
+query = "software feature delivery"
 emb = models.embeddingString(query)
-cur = postgres.get_connection().cursor()
-cur.execute("SELECT text FROM page_text ORDER BY embedding <-> %s LIMIT 5;", (emb,))
-res = cur.fetchall()
+chunks = postgres.get_similar_chunks(emb, 5)
 
-context = "\n".join([r[0] for r in res])
+system = "You are a helpful assistant. \
+        You base your knowledge of data that is given in a context \
+        marked with CONTEXT_BEGIN and CONTEXT_END."
 
-print("********************************************************************************")
-print("********************************************************************************")
-print("********************************************************************************")
-prompt = f"""{context}\n\n
-Summarize the above text, focus on infomation related to: {query}
+prompt = f"""
+CONTEXT_BEGIN
+
+{"CHUNK\n" + "\n\nCHUNK\n\n".join([c.text for c in chunks])}
+
+CONTEXT_END
+
+Summarize each CHUNK in between CONTEXT_BEGIN and CONTEXT_END with respect to: {query}
 """
-print("Prompt: " + prompt + "\n\n\n")
+print("Prompt:\n\n" + prompt + "\n\n\n")
 
-print("********************************************************************************")
-result = models.chat(prompt)
+print("**************************************************")
+result = models.chat(prompt, system)
 print(result)
+print("**************************************************")
 
-print("********************************************************************************")
-prompt2 = f"""Given the following context:\n\n
-
-Begin of context
-
-{result}
-
-End of context
-
-Your task: Try to derive as much information as possible from the context to everything related to:
-{query}
-"""
-print("Prompt 2: " + prompt2)
-print("********************************************************************************")
-result2 = models.chat(prompt2)
-print(result2)
-
+# prompt2 = f"""Given the following context:\n\n
+#
+# Begin of context
+#
+# {result}
+#
+# End of context
+#
+# Your task: Try to derive as much information as possible from the context to everything related to:
+# {query}
+# """
+# print("Prompt 2: " + prompt2)
+# print(
+#     "********************************************************************************"
+# )
+# result2 = models.chat(prompt2)
+# print(result2)
