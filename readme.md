@@ -31,8 +31,7 @@ docker compose run --build app import_dump.py
 
 - https://huggingface.co/CohereForAI/c4ai-command-r-v01
 - Training data NOT available
-- Focus on RAG
-- Support for function calling
+- Focus on RAG, supports function calling
 - 128k context
 
 #### StarChat2 15b by HuggingFace and BigCode (BigCode Open RAIL-M v1)
@@ -68,6 +67,28 @@ docker compose run --build app import_dump.py
 - Extra license for >100M active users / month
 
 
-#### Embedding models with open weights licenses
+### Embedding models with open weights licenses
 
+https://huggingface.co/spaces/mteb/leaderboard
+
+#### all-MiniLM L6 V2 by Microsoft + SBert (apache-2.0)
+
+- https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+- 384 dimensions
+- 33M parameters
+- Training data available
+
+#### Nomic Embed by Nomic AI (apache-2.0)
+
+- https://blog.nomic.ai/posts/nomic-embed-text-v1
+- 768 dimensions
+- 137M parameters
+- Open source, Open data, Open training code, Fully reproducible and auditable
+
+#### mxbai-embed-large-v1 by mixedbread.ai (apache-2.0)
+
+- https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1
+- 1024 dimensions
+- 335M parameters
+- Training data NOT available
 
