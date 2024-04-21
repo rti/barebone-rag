@@ -83,15 +83,17 @@ with postgres.get_connection().cursor() as cur:
                 continue
 
             cur.execute(
-                "INSERT INTO pages (title, text) VALUES (%s, %s);",
+                "INSERT INTO pages (title, text) VALUES (%s, %s) RETURNING id;",
                 (title, text),
             )
+            result = cur.fetchall()
+            pageId = result[0][0]
 
             for c in chunker.chunk(text):
                 embedding = models.embeddingString(c)
                 cur.execute(
-                    "INSERT INTO chunks (title, text, embedding) VALUES (%s, %s, %s);",
-                    (title, c, embedding),
+                    "INSERT INTO chunks (title, text, embedding, page_id) VALUES (%s, %s, %s, %s);",
+                    (title, c, embedding, pageId),
                 )
 
             # Commit the transaction
