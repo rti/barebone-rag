@@ -3,9 +3,12 @@ import ollama
 _client = None
 
 embeddingsModel = "all-minilm"  # or: mxbai-embed-large
-chatModel = "qwen:0.5b"
-# chatModel = "gemma:7b"
 # chatModel = "mistral:v0.2"
+chatModel = "zephyr:7b"
+# chatModel = "openchat:7b-v3.5-0106"
+# chatModel = "qwen:0.5b"
+# chatModel = "gemma:7b"
+# chatModel = "command-r"
 
 
 def get_connection():
