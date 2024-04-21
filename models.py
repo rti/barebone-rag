@@ -2,13 +2,16 @@ import ollama
 
 _client = None
 
-embeddingsModel = "all-minilm"  # or: mxbai-embed-large
+embeddingsModel = "all-minilm"  
+# embeddingsModel = "nomic-embed-text"  
+# embeddingsModel = "mxbai-embed-large"  
+
 # chatModel = "mistral:v0.2"
-chatModel = "zephyr:7b"
+chatModel = "zephyr:7b-beta"
 # chatModel = "openchat:7b-v3.5-0106"
 # chatModel = "qwen:0.5b"
-# chatModel = "gemma:7b"
-# chatModel = "command-r"
+# chatModel = "gemma:7b-v1.1"
+# chatModel = "command-r:v0.1"
 
 
 def get_connection():
