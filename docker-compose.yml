@@ -1,8 +1,8 @@
 services:
 
   ollama:
-    image: ollama/ollama:0.1.31-rocm
-    # image: ollama/ollama:0.1.31 # for nvidia
+    image: ollama/ollama:0.1.32-rocm
+    # image: ollama/ollama:0.1.32 # for nvidia
 
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
@@ -15,7 +15,7 @@ services:
     # GPU access for ROCm (AMD)
     devices:
       - /dev/dri:/dev/dri
-      # - /dev/kfd:/dev/kfd
+      - /dev/kfd:/dev/kfd
 
     # GPU access for CUDA (NVIDIA) - untested
     # deploy:
