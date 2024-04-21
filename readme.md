@@ -14,12 +14,14 @@ docker compose run --build app import_dump.py
 
 - https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
 - Training data NOT available
+- Also available: Mixtral 8x7B, 8x22B
 
 #### Zephyr 7b beta by HugginFace (MIT)
 
 - https://huggingface.co/HuggingFaceH4/zephyr-7b-beta
 - based on Mistral 0.1 7b
 - Code, model, data and tutorials publicly available
+- Also available: Zephyr Opro 141B (based on Mixtral 8x22B)
 
 #### OpenChat 7b 3.5 0106 by Tsinghua University et al. (apache-2.0)
 
@@ -33,6 +35,7 @@ docker compose run --build app import_dump.py
 - Training data NOT available
 - Focus on RAG, supports function calling
 - 128k context
+- Also available: Command-R-Plus 104B
 
 #### StarChat2 15b by HuggingFace and BigCode (BigCode Open RAIL-M v1)
 
@@ -48,6 +51,7 @@ docker compose run --build app import_dump.py
 - https://ai.google.dev/gemma/prohibited_use_policy
 - Training data NOT available
 - Restrictions on use cases to not cause any harm 
+- Also available: Gemma 1.1 2B
 
 #### Llama 3 8b by Meta/Facebook (llama 3 license)
 
@@ -57,6 +61,7 @@ docker compose run --build app import_dump.py
 - Deriviates must have the same license
 - Restriction on using output for other models
 - Extra license for >700M active users / month
+- Also available: Llama 70B
 
 #### Qwen 1.5 7B by Alibaba Cloud (qwen license)
 
@@ -65,6 +70,7 @@ docker compose run --build app import_dump.py
 - Training data NOT available
 - Must not be used to improve other models
 - Extra license for >100M active users / month
+- Also available: 0.5B, 1.8B, 4B, 14B, 32B, 72B, and MoE 14B with 2.7B active
 
 
 ### Embedding models with open weights licenses
