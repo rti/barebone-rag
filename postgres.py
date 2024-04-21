@@ -39,6 +39,7 @@ def init(embeddingLength: int):
 
             CREATE TABLE IF NOT EXISTS chunks ( 
                 id SERIAL PRIMARY KEY, 
+                page_id INT NOT NULL, 
                 title VARCHAR(255) NOT NULL, 
                 text TEXT NOT NULL, 
                 embedding vector( {} ) NOT NULL
