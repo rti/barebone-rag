@@ -1,5 +1,7 @@
 ## Quickstart
 
+TODO: can we use an OpenAI API client and exchange inference engines?
+
 ```
 docker compose up --build
 ```
@@ -7,6 +9,12 @@ docker compose up --build
 ```
 docker compose run --build app import_dump.py
 ```
+
+```
+marp -w slides.md
+```
+
+TODO: OSI license https://opensource.org/license/page/2?ls=apache
 
 ### LLMs with open weights licenses
 
@@ -108,3 +116,8 @@ https://huggingface.co/spaces/mteb/leaderboard
 - 335M parameters
 - Training data NOT available
 
+
+
+# import_db
+40816it [4:11:24,  2.71it/s] 
+Succeeded after 251:49 
