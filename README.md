@@ -10,6 +10,8 @@ docker compose run --build app import_dump.py
 
 ### LLMs with open weights licenses
 
+https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard
+
 #### Mistral 0.2 7b by Mistral AI (apache-2.0)
 
 - https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
@@ -20,7 +22,7 @@ docker compose run --build app import_dump.py
 
 - https://huggingface.co/HuggingFaceH4/zephyr-7b-beta
 - based on Mistral 0.1 7b
-- Code, model, data and tutorials publicly available
+- Fine tuning code, model, data and tutorials publicly available
 - Also available: Zephyr Opro 141B (based on Mixtral 8x22B)
 
 #### OpenChat 7b 3.5 0106 by Tsinghua University et al. (apache-2.0)
@@ -37,12 +39,20 @@ docker compose run --build app import_dump.py
 - 128k context
 - Also available: Command-R-Plus 104B
 
+#### StableLM2 1.6b by stability.ai (stability ai license)
+
+- https://huggingface.co/stabilityai/stablelm-2-1_6b-chat
+- Extra license for commercial use
+- Pre-training and fine-tuning details and data available
+- Also available: StableLM2 12b (not in ollama yet)
+
 #### StarChat2 15b by HuggingFace and BigCode (BigCode Open RAIL-M v1)
 
 - https://huggingface.co/HuggingFaceH4/starchat2-15b-v0.1
 - https://huggingface.co/spaces/bigcode/bigcode-model-license-agreement
 - based on StarCoder2 https://huggingface.co/bigcode/starcoder2-15b
 - training data available
+- emphasis on code
 
 #### Gemma 1.1 7b by Google Brain (gemma license)
 
