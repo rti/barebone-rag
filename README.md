@@ -1,7 +1,7 @@
 # Semantic Search and RAG on a FOSS stack
 
 ## Slides
-https://rti.github.io/barebone-rag/slides.html
+[rti.github.io/barebone-rag/slides.html](https://rti.github.io/barebone-rag/slides.html)
 
 ## Quickstart
 
