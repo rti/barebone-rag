@@ -35,6 +35,14 @@ All software components are released under [OSI approved licenses](https://opens
 
 ---
 
+# GPU stacks
+
+- ⛔ NVIDIA CUDA has a proprietary license
+- ✅ AMD ROCm stack is MIT licensed 
+  - `amdgpu` driver in kernel mainline
+
+---
+
 # Components for Semantic Search
 
 - Encode semantics ▶ **Embeddings**
@@ -59,7 +67,7 @@ All software components are released under [OSI approved licenses](https://opens
 _Get up and running with large language models._
 
 - Inference engine based on [llama.cpp](https://github.com/ggerganov/llama.cpp)
-- Supports AMD GPU - Linux driver `amdgpu` and ROCm are MIT licensed ✅
+- Supports AMD GPU via ROCm
 - CPU support (AVX, AVX2, AVX512, Apple Silicon)
 - Quantization
 - Model Library
@@ -209,7 +217,7 @@ SELECT id, text FROM chunks
 
 ---
 
-# LLMs with openly licenses on datasets
+# LLMs with Openly Licensed Datasets
 
 - [Allan AI OLMo](https://huggingface.co/allenai/OLMo-7B) based on the [Dolma dataset](https://huggingface.co/datasets/allenai/dolma)
 - [LumiOpen Viking](https://huggingface.co/LumiOpen/Viking-7B)
