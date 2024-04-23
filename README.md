@@ -9,6 +9,8 @@ Required software:
 - Docker Engine
 - Docker Compose
 
+
+
 ### Start the stack
 ```
 docker compose up --build
@@ -30,4 +32,23 @@ Or, with nix-wrap:
 
 ```
 wrap -n nix run nixpkgs#marp-cli -- --watch slides.md
+```
+
+## Development
+### Python dependencies
+```
+pip install beautifulsoup4
+pip install black
+pip install lxml
+pip install ollama
+pip install psycopg[binary]
+pip install tqdm
+pip install tqdm
+```
+
+or
+
+
+```
+pip install -r requirements.txt
 ```
