@@ -2,23 +2,48 @@ import models
 import postgres
 import json
 
-question_json = """
+questions_json = """
+[ 
 {
-    "page_id": "<page_id>",
-    "question": "your question 1",
-    "answer": "your answer to question 1",
-}
+  "chunk_id": "8",
+  "question": "hackathon 2024 location"
+}, 
+{
+  "chunk_id": "1",
+  "question": "hackathon tallinn location"
+} 
+]
 """
 
-question = json.loads(question_json)
+questions = json.loads(questions_json)
 
-query = question["question"]
-emb = models.embeddingString(query)
-chunks = postgres.get_similar_chunks(emb, 5)
+for question in questions:
+    query = question["question"]
+    emb = models.embeddingString(query)
+    chunks = postgres.get_similar_chunks(emb, 3)
 
-result = list(filter(lambda c: c.pageId == question["page_id"], chunks))
+    result = [c for c in chunks if c.id == int(question["chunk_id"])]
 
-if len(result) > 0:
-    print("YAY")
-else:
-    print("nope")
+    print("*" * 72)
+    print(f"*** {query}")
+    print("*" * 72)
+    print()
+
+    for c in chunks:
+        print("*" * 72)
+        print(f"{c.id} {c.title}")
+        print("*" * 72)
+        print()
+        print(c.text)
+        print()
+        print("*" * 72)
+        print("*" * 72)
+        print()
+
+
+    if len(result) > 0:
+        print("YAY")
+    else:
+        print("nope")
+
+
