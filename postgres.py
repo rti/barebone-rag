@@ -54,22 +54,35 @@ def init(embeddingLength: int):
 class Chunk:
     id: int
     pageId: int
-    text:str
+    title: str
+    text: str
 
 
-def get_similar_chunks(embeddingString: str, numberOfResults=5) -> List[Chunk]:
+def get_similar_chunks(embeddingString: str, limit=5) -> List[Chunk]:
     cur = get_connection().cursor()
     cur.execute(
-        "SELECT id, page_id, text FROM chunks ORDER BY embedding <-> %s LIMIT %s;",
+        "SELECT id, page_id, title, text FROM chunks ORDER BY embedding <-> %s LIMIT %s;",
         (
             embeddingString,
-            numberOfResults,
+            limit,
         ),
     )
     res = cur.fetchall()
     cur.close()
 
-    return [Chunk(id=r[0], pageId=r[1], text=r[2]) for r in res]
+    return [Chunk(id=r[0], pageId=r[1], title=r[2], text=r[3]) for r in res]
+
+
+def get_random_chunks(limit=5) -> List[Chunk]:
+    cur = get_connection().cursor()
+    cur.execute(
+        "SELECT id, page_id, title, text FROM chunks ORDER BY RANDOM() LIMIT %s;",
+        (limit,),
+    )
+    res = cur.fetchall()
+    cur.close()
+
+    return [Chunk(id=r[0], pageId=r[1], title=r[2], text=r[3]) for r in res]
 
 
 @dataclass
@@ -90,6 +103,7 @@ def get_pages(limit=10) -> List[Page]:
 
     return [Page(id=r[0], title=r[1], text=r[2]) for r in res]
 
+
 def get_random_pages(limit=10) -> List[Page]:
     cur = get_connection().cursor()
     cur.execute(
@@ -100,4 +114,3 @@ def get_random_pages(limit=10) -> List[Page]:
     cur.close()
 
     return [Page(id=r[0], title=r[1], text=r[2]) for r in res]
-
