@@ -11,7 +11,7 @@ docker compose run --build app import_dump.py
 ```
 
 ```
-marp -w slides.md
+wrap -n nix run nixpkgs#marp-cli -- --watch slides.md
 ```
 
 TODO: OSI license https://opensource.org/license/page/2?ls=apache
