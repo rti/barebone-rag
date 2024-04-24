@@ -34,13 +34,13 @@ def init(embeddingLength: int):
             CREATE TABLE IF NOT EXISTS pages ( 
                 id SERIAL PRIMARY KEY, 
                 title VARCHAR(255) NOT NULL, 
+                description VARCHAR(255), 
                 text TEXT NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS chunks ( 
                 id SERIAL PRIMARY KEY, 
                 page_id INT NOT NULL, 
-                title VARCHAR(255) NOT NULL, 
                 text TEXT NOT NULL, 
                 embedding vector( {} ) NOT NULL
             );
@@ -55,13 +55,20 @@ class Chunk:
     id: int
     pageId: int
     title: str
+    description: str
     text: str
 
 
 def get_similar_chunks(embeddingString: str, limit=5) -> List[Chunk]:
     cur = get_connection().cursor()
     cur.execute(
-        "SELECT id, page_id, title, text FROM chunks ORDER BY embedding <-> %s LIMIT %s;",
+        """
+        SELECT c.id, c.page_id, p.title, p.description, c.text
+        FROM chunks c
+        JOIN pages p ON c.page_id = p.id
+        ORDER BY c.embedding <-> %s
+        LIMIT %s;
+        """,
         (
             embeddingString,
             limit,
@@ -70,47 +77,54 @@ def get_similar_chunks(embeddingString: str, limit=5) -> List[Chunk]:
     res = cur.fetchall()
     cur.close()
 
-    return [Chunk(id=r[0], pageId=r[1], title=r[2], text=r[3]) for r in res]
+    return [Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4]) for r in res]
 
 
 def get_random_chunks(limit=5) -> List[Chunk]:
     cur = get_connection().cursor()
     cur.execute(
-        "SELECT id, page_id, title, text FROM chunks ORDER BY RANDOM() LIMIT %s;",
+        """
+        SELECT c.id, c.page_id, p.title, p.description, c.text
+        FROM chunks c
+        JOIN pages p ON c.page_id = p.id
+        ORDER BY RANDOM()
+        LIMIT %s;
+        """,
         (limit,),
     )
     res = cur.fetchall()
     cur.close()
 
-    return [Chunk(id=r[0], pageId=r[1], title=r[2], text=r[3]) for r in res]
+    return [Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4]) for r in res]
 
 
 @dataclass
 class Page:
     id: int
     title: str
+    description: str
     text: str
 
 
 def get_pages(limit=10) -> List[Page]:
     cur = get_connection().cursor()
     cur.execute(
-        "SELECT id, title, text FROM pages LIMIT %s;",
+        "SELECT id, title, description, text FROM pages LIMIT %s;",
         (limit,),
     )
     res = cur.fetchall()
     cur.close()
 
-    return [Page(id=r[0], title=r[1], text=r[2]) for r in res]
+    return [Page(id=r[0], title=r[1], description=r[2], text=r[3]) for r in res]
 
 
 def get_random_pages(limit=10) -> List[Page]:
     cur = get_connection().cursor()
     cur.execute(
-        "SELECT id, title, text FROM pages ORDER BY RANDOM() LIMIT %s;",
+        "SELECT id, title, description, text FROM pages ORDER BY RANDOM() LIMIT %s;",
         (limit,),
     )
     res = cur.fetchall()
     cur.close()
 
-    return [Page(id=r[0], title=r[1], text=r[2]) for r in res]
+    return [Page(id=r[0], title=r[1], description=r[2], text=r[3]) for r in res]
