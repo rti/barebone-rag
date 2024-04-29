@@ -14,7 +14,7 @@ def print_results(chunks_with_ranks):
 
     pages = {}
 
-    # merge chunk-ranks of multiple pages into one
+    # merge chunk-ranks of multiple pages into one to have more concise output
     for chunk, rank in chunks_with_ranks:
         existing_chunk = pages.get(chunk.pageId, None)
         if not existing_chunk:
@@ -26,8 +26,6 @@ def print_results(chunks_with_ranks):
     for p in sorted(pages.values(), key=lambda x: x[1]):
         print_chunk_info(p[0], p[1])
         print()
-
-    print()
 
 
 if __name__ == "__main__":
