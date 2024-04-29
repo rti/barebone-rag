@@ -1,25 +1,27 @@
 ---
 title: Semantic Search and RAG on a FOSS stack
 author: Robert Timm
-
 ---
+
 <!-- footer: Wikimedia Hackathon 2024 Tallinn | Robert Timm | <robert.timm@wikimedia.de> -->
 
 # <!-- fit --> Semantic Search and RAG on a FOSS stack
 
 ---
+
 <!-- footer: "" -->
 
 ![bg right](./slides_code_qrcode.png)
 
 ### [github.com/rti/barebone-rag](https://github.com/rti/barebone-rag)
+
 - Slides
 - Example code
 
 ---
+
 <!-- paginate: true -->
 <!-- header: Semantic Search and RAG on a FOSS stack -->
-<!-- footer: Wikimedia Hackathon 2024 Tallinn | Robert Timm | <robert.timm@wikimedia.de> -->
 
 ## Semantic Search
 
@@ -38,7 +40,7 @@ All software components are released under [OSI approved licenses](https://opens
 # GPU stacks
 
 - ⛔ NVIDIA CUDA has a proprietary license
-- ✅ AMD ROCm stack is MIT licensed 
+- ✅ AMD ROCm stack is MIT licensed
   - `amdgpu` driver in kernel mainline
 
 ---
@@ -56,9 +58,16 @@ All software components are released under [OSI approved licenses](https://opens
 | --------------------------------------------------------------------------------- | ------------- | -------------- | -------------- |
 | [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | ✅ Apache-2.0 | ✅             | ✅             |
 | [nomic-embed-text-v1](https://huggingface.co/nomic-ai/nomic-embed-text-v1)        | ✅ Apache-2.0 | ✅             | ✅             |
+| [bge-large-en-v1.5](https://huggingface.co/BAAI/bge-large-en-v1.5)                | ✅ MIT        | ⛔             | ⛔             |
 | [mxbai-embed-large-v1](https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1) | ✅ Apache-2.0 | ⛔             | ⛔             |
 
+<!-- TODO: put dimensions here? -->
+
+<!-- footer: "Find more embedding models here: https://huggingface.co/spaces/mteb/leaderboard" -->
+
 ---
+
+<!-- footer: "" -->
 
 # Embedding Inference
 
@@ -105,6 +114,14 @@ res = ollama.embeddings(
     prompt="This string")
 
 res["embedding"] # [0.33, 0.62, 0.19, ...]
+```
+
+---
+
+#### Generate embedding with prefix
+
+```python
+# TODO
 ```
 
 ---
@@ -157,7 +174,6 @@ SELECT id, text FROM chunks
 
 # <!-- fit --> Components for Retrieval Augmented Generation (RAG)
 
-
 - Find matching sources ▶ **Semantic Search**
 - Generate Response ▶ **Large Language Model (LLM) Inference**
 
@@ -167,7 +183,7 @@ SELECT id, text FROM chunks
 
 ## [🦙 Ollama](https://github.com/ollama/ollama)
 
-- LLMs too 😀  Actually its core use case
+- LLMs too 😀 Actually its core use case
 - Great [model library](https://ollama.com/library) 📚
 
 ---
@@ -202,18 +218,23 @@ SELECT id, text FROM chunks
 | [OpenChat 7b 3.5](https://huggingface.co/openchat/openchat-3.5-0106)                   | ✅ Apache-2.0   | ⛔             | ✅             |
 | [Cohere Command-R 35b](https://huggingface.co/CohereForAI/c4ai-command-r-v01)          | ✅ CC-BY-NC 4.0 | ⛔             | ⛔             |
 | [Stability.AI StableLM2 1.6b](https://huggingface.co/stabilityai/stablelm-2-1_6b-chat) | ⛔ Custom       | ✅             | ✅             |
-<!-- | Microsoft Phi 2 | TBD | | | -->
+
+<!-- TODO: apple models -->
+<!-- TODO: microsoft phi 3 -->
+<!-- footer: "Find more LLMs here: https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" -->
 
 ---
 
+<!-- footer: "" -->
+
 # Famous LLMs with "free" weights
 
-| Model Name                                                           | License   | Pre Train Data | Fine Tune Data |
-| -------------------------------------------------------------------- | --------- | -------------- | -------------- |
-| [Meta Llama 3 8b](https://huggingface.co/meta-llama/Meta-Llama-3-8B) | ⛔ Custom | ⛔             | ⛔             |
-| [Google Gemma 1.1 7b](https://huggingface.co/google/gemma-1.1-7b-it) | ⛔ Custom | ⛔             | ⛔             |
-| [Alibaba Qwen 1.5 7b](https://huggingface.co/Qwen/Qwen1.5-7B)        | ⛔ Custom | ⛔             | ⛔             |
-<!-- | Microsoft Phi 3 | TBD | | | -->
+| Model Name                                                           | License         | Pre Train Data | Fine Tune Data |
+| -------------------------------------------------------------------- | --------------- | -------------- | -------------- | --- | --- |
+| [Meta Llama 3 8b](https://huggingface.co/meta-llama/Meta-Llama-3-8B) | ⛔ Custom       | ⛔             | ⛔             |
+| [Google Gemma 1.1 7b](https://huggingface.co/google/gemma-1.1-7b-it) | ⛔ Custom       | ⛔             | ⛔             |
+| [Alibaba Qwen 1.5 7b](https://huggingface.co/Qwen/Qwen1.5-7B)        | ⛔ Custom       | ⛔             | ⛔             |
+| <!--                                                                 | Microsoft Phi 3 | TBD            |                |     | --> |
 
 ---
 
