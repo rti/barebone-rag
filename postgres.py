@@ -1,6 +1,6 @@
 import psycopg
 from psycopg.sql import SQL, Literal
-from typing import List
+from typing import List, Tuple
 from dataclasses import dataclass
 
 _db: psycopg.Connection | None = None
@@ -77,7 +77,42 @@ def get_similar_chunks(embeddingString: str, limit=5) -> List[Chunk]:
     res = cur.fetchall()
     cur.close()
 
-    return [Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4]) for r in res]
+    return [
+        Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4])
+        for r in res
+    ]
+
+
+def get_similar_chunks_with_rank(
+    embeddingString: str, limit=5
+) -> List[Tuple[Chunk, float]]:
+    cur = get_connection().cursor()
+    cur.execute(
+        """
+        SELECT 
+            c.id, c.page_id, p.title, p.description, c.text, 
+            c.embedding <-> %s AS distance
+        FROM chunks c
+        JOIN pages p ON c.page_id = p.id
+        ORDER BY c.embedding <-> %s
+        LIMIT %s;
+        """,
+        (
+            embeddingString,
+            embeddingString,
+            limit,
+        ),
+    )
+    res = cur.fetchall()
+    cur.close()
+
+    return [
+        (
+            Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4]),
+            float(r[5]),
+        )
+        for r in res
+    ]
 
 
 def get_random_chunks(limit=5) -> List[Chunk]:
@@ -95,7 +130,10 @@ def get_random_chunks(limit=5) -> List[Chunk]:
     res = cur.fetchall()
     cur.close()
 
-    return [Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4]) for r in res]
+    return [
+        Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4])
+        for r in res
+    ]
 
 
 @dataclass
