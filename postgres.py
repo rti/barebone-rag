@@ -86,6 +86,7 @@ def get_similar_chunks(embeddingString: str, limit=5) -> List[Chunk]:
 def get_similar_chunks_with_rank(
     embeddingString: str, limit=5
 ) -> List[Tuple[Chunk, float]]:
+    """ <-> in pgvecto.rs uses squared euclidean distance as metric """
     cur = get_connection().cursor()
     cur.execute(
         """
