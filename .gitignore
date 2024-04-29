@@ -2,3 +2,5 @@
 .direnv
 __pycache__
 *.xml
+*.sql
+*.parquet
