@@ -4,10 +4,13 @@ from copy import deepcopy
 from typing import List, Tuple
 
 
+def title_to_url(title: str):
+    return f"https://en.wikipedia.org/wiki/{title.replace(' ', '_')}"
+
+
 def print_chunk_info(chunk, rank):
-    url = f"https://en.wikipedia.org/wiki/{chunk.title.replace(' ', '_')}"
-    print(f"{chunk.title} ({rank}) {url}")
-    print(f"{chunk.description}")
+    print(f"  {chunk.title} ({rank}) {title_to_url(chunk.title)}")
+    print(f"  {chunk.description}")
 
 
 def print_results(chunks_with_distances):
@@ -29,7 +32,7 @@ def print_results(chunks_with_distances):
         if not existing_chunk:
             pages[chunk.pageId] = (chunk, rank)
 
-    print("Results:\n")
+    print("\nResults:\n")
 
     # sort pages by rank and print
     for p in sorted(pages.values(), key=lambda x: x[1]):
@@ -39,15 +42,11 @@ def print_results(chunks_with_distances):
 
 def get_sys_prompt():
     return """
-Don't answer questions that are harmful or immoral.
-You are a powerful conversational AI trained to help people. You are
-augmented by a number of documents, and your job is to use and consume the
-documents to best help the user. You will then see a specific instruction
-instructing you what kind of response to generate. When you answer the user's
-requests, you cite your sources in your answers, according to those
-instructions. You should focus on serving the user's needs as best you can,
-which will be wide-ranging. You should answer in full sentences, using proper
-grammar and spelling.
+You are a powerful AI trained to help people. You are augmented by a context
+with a number of documents, and your job is to use and consume the documents to
+best help the user. When you answer the user's query, you cite documents from
+the context by referencing document URLs. You should answer in full sentences,
+using proper grammar and spelling.
 """
 
 
@@ -55,13 +54,24 @@ def get_user_prompt(query, chunks_with_distances: List[Tuple[postgres.Chunk, flo
     context = ""
     index = 0
     for c, _ in chunks_with_distances:
-        context += f"Document {index}\n{c.title}: {c.description}\n{c.text}\n\n"
+        context += f"Document url:{title_to_url(c.title)}\n{c.title}: {c.description}\n{c.text}\n\n"
         index += 1
 
-    return (
-        f"Respond to a query. Base your answer on information from this context only:\n"
-        + f"{context}\n\nEnd of context.\n\nRespond to the following query {query}."
-    )
+    return f"""
+Respond to a query using the following context. Base your answer on documents
+from this context only and cite the documents you used by using the URL like
+this:
+
+According to https://en.wikipedia.org/wiki/Cat the domestic cat is a small carnivorous mammal.
+
+Context:
+
+{context}
+
+End of context.
+
+Respond to the following query: {query}.
+"""
 
 
 def print_chatbot(stream):
@@ -107,5 +117,6 @@ def rag(query, number_of_documents=5):
 
 if __name__ == "__main__":
     while True:
+        print(78 * ".")
         query = input("\nQuery >> ")
-        rag(query, number_of_documents=6)
+        rag(query, number_of_documents=1)
