@@ -59,34 +59,10 @@ class Chunk:
     text: str
 
 
-def get_similar_chunks(embeddingString: str, limit=5) -> List[Chunk]:
-    cur = get_connection().cursor()
-    cur.execute(
-        """
-        SELECT c.id, c.page_id, p.title, p.description, c.text
-        FROM chunks c
-        JOIN pages p ON c.page_id = p.id
-        ORDER BY c.embedding <-> %s
-        LIMIT %s;
-        """,
-        (
-            embeddingString,
-            limit,
-        ),
-    )
-    res = cur.fetchall()
-    cur.close()
-
-    return [
-        Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4])
-        for r in res
-    ]
-
-
 def get_similar_chunks_with_rank(
     embeddingString: str, limit=5
 ) -> List[Tuple[Chunk, float]]:
-    """ <-> in pgvecto.rs uses squared euclidean distance as metric """
+    """<-> in pgvecto.rs uses squared euclidean distance as metric"""
     cur = get_connection().cursor()
     cur.execute(
         """

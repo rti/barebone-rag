@@ -6,7 +6,7 @@ import chunker
 
 import pyarrow.parquet as pq
 
-postgres.init(embeddingLength=models.embeddingLength())
+postgres.init(embeddingLength=models.embedding_length())
 
 with postgres.get_connection().cursor() as cur:
     # https://huggingface.co/datasets/euirim/goodwiki
@@ -27,7 +27,7 @@ with postgres.get_connection().cursor() as cur:
 
         for c in chunker.chunk(text, chunkSize=256, overlap=32):
             chunkText = title + "\n" + (desc if desc else "") + "\n" + c
-            embedding = models.embeddingString(chunkText, models.EmbeddingPrefix.DOCUMENT)
+            embedding = models.embedding_string(chunkText, models.EmbeddingPrefix.DOCUMENT)
             cur.execute(
                 "INSERT INTO chunks (text, embedding, page_id) VALUES (%s, %s, %s);",
                 (c, embedding, pageId),

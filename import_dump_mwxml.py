@@ -57,7 +57,7 @@ def strip_wikitext(s):
     return text
 
 
-postgres.init(embeddingLength=models.embeddingLength())
+postgres.init(embeddingLength=models.embedding_length())
 
 with postgres.get_connection().cursor() as cur:
     with open("dump.xml", "rb") as f:
@@ -90,7 +90,7 @@ with postgres.get_connection().cursor() as cur:
             pageId = result[0][0]
 
             for c in chunker.chunk(text):
-                embedding = models.embeddingString(c)
+                embedding = models.embedding_string(c)
                 cur.execute(
                     "INSERT INTO chunks (title, text, embedding, page_id) VALUES (%s, %s, %s, %s);",
                     (title, c, embedding, pageId),

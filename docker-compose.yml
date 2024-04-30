@@ -1,12 +1,51 @@
 services:
 
-  ollama:
+  ollama-embedding:
     image: ollama/ollama:0.1.32-rocm
     # image: ollama/ollama:0.1.32 # for nvidia
 
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
       OLLAMA_MODELS: /var/lib/ollama/models
+      # TODO: keep model alive
+
+    volumes:
+      - ollama-models:/var/lib/ollama/models
+      - ollama-config:/root/.ollama # stores private key
+
+    # GPU access for ROCm (AMD)
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/kfd:/dev/kfd
+
+    # GPU access for CUDA (NVIDIA) - untested
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    #
+
+    # ports:
+    #   - 11434:11434
+
+    healthcheck:
+      test: "ollama --version || exit 1"
+      interval: 5s
+      timeout: 1s
+      retries: 10
+      start_period: 10s
+
+  ollama-chat:
+    image: ollama/ollama:0.1.32-rocm
+    # image: ollama/ollama:0.1.32 # for nvidia
+
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_MODELS: /var/lib/ollama/models
+      # TODO: keep model alive
 
     volumes:
       - ollama-models:/var/lib/ollama/models
@@ -46,7 +85,7 @@ services:
       POSTGRES_PASSWORD: mypassword
 
     volumes:
-      - postgres-data:/var/lib/postgres/data
+      - postgres-data:/var/lib/postgresql/data
 
     ports:
       - 5432:5432
@@ -63,7 +102,9 @@ services:
     volumes:
       - .:/workspace
     depends_on:
-      ollama:
+      ollama-embedding:
+        condition: service_healthy
+      ollama-chat:
         condition: service_healthy
       postgres:
         condition: service_healthy
