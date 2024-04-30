@@ -27,7 +27,7 @@ End of context.
 Create one very short factoid question about the context above. Do not provide any justification, only the queestion.
 """
 
-    response = models.chat(prompt, system)
+    response = models.chat(prompt, [system])
     print2("\n*******************************************************************************\n")
     print2(prompt)
     print2("\n*******************************************************************************\n")
