@@ -10,19 +10,19 @@ def print_chunk_info(chunk, rank):
     print(f"{chunk.description}")
 
 
-def print_results(chunks_with_ranks):
-    if len(chunks_with_ranks) == 0:
+def print_results(chunks_with_distances):
+    if len(chunks_with_distances) == 0:
         print("No results found.")
         return
 
     pages = {}
 
-    chunks_with_ranks = deepcopy(chunks_with_ranks)
+    chunks_with_distances = deepcopy(chunks_with_distances)
 
     # merge multiple chunks of the same page, keeping the highest rank
     last_rank = 0
-    for chunk, rank in chunks_with_ranks:
-        assert last_rank < rank, "Ranks are not sorted."
+    for chunk, rank in chunks_with_distances:
+        assert last_rank < rank, "distances are not sorted."
         last_rank = rank
 
         existing_chunk = pages.get(chunk.pageId, None)
@@ -51,10 +51,10 @@ grammar and spelling.
 """
 
 
-def get_user_prompt(query, chunks_with_ranks: List[Tuple[postgres.Chunk, float]]):
+def get_user_prompt(query, chunks_with_distances: List[Tuple[postgres.Chunk, float]]):
     context = ""
     index = 0
-    for c, _ in chunks_with_ranks:
+    for c, _ in chunks_with_distances:
         context += f"Document {index}\n{c.title}: {c.description}\n{c.text}\n\n"
         index += 1
 
@@ -88,12 +88,14 @@ def print_chatbot(stream):
 
 def rag(query, number_of_documents=5):
     emb = models.embedding_string(query, models.EmbeddingPrefix.QUERY)
-    chunks_with_ranks = postgres.get_similar_chunks_with_rank(emb, number_of_documents)
+    chunks_with_distances = postgres.get_similar_chunks_with_distance(
+        emb, number_of_documents
+    )
 
-    print_results(chunks_with_ranks)
+    print_results(chunks_with_distances)
 
     sys_prompt = get_sys_prompt()
-    user_prompt = get_user_prompt(query, chunks_with_ranks)
+    user_prompt = get_user_prompt(query, chunks_with_distances)
 
     # print(sys_prompt)
     # print(user_prompt)
