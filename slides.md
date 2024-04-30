@@ -54,14 +54,12 @@ All software components are released under [OSI approved licenses](https://opens
 
 # Embedding Models
 
-|                                                                                   | OSI License   | Pre Train Data | Fine Tune Data |
-| --------------------------------------------------------------------------------- | ------------- | -------------- | -------------- |
-| [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | ✅ Apache-2.0 | ✅             | ✅             |
-| [nomic-embed-text-v1](https://huggingface.co/nomic-ai/nomic-embed-text-v1)        | ✅ Apache-2.0 | ✅             | ✅             |
-| [bge-large-en-v1.5](https://huggingface.co/BAAI/bge-large-en-v1.5)                | ✅ MIT        | ⛔             | ⛔             |
-| [mxbai-embed-large-v1](https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1) | ✅ Apache-2.0 | ⛔             | ⛔             |
-
-<!-- TODO: put dimensions here? -->
+|                                                                                   | Dims | OSI License   | Pre Train Data | Fine Tune data |
+| --------------------------------------------------------------------------------- | ---- | ------------- | -------------- | -------------- |
+| [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) | 384  | ✅ Apache-2.0 | ✅             | ✅             |
+| [nomic-embed-text-v1](https://huggingface.co/nomic-ai/nomic-embed-text-v1)        | 768  | ✅ Apache-2.0 | ✅             | ✅             |
+| [bge-large-en-v1.5](https://huggingface.co/BAAI/bge-large-en-v1.5)                | 1024 | ✅ MIT        | ⛔             | ⛔             |
+| [mxbai-embed-large-v1](https://huggingface.co/mixedbread-ai/mxbai-embed-large-v1) | 1024 | ✅ Apache-2.0 | ⛔             | ⛔             |
 
 <!-- footer: "Find more embedding models here: https://huggingface.co/spaces/mteb/leaderboard" -->
 
@@ -116,13 +114,7 @@ res = ollama.embeddings(
 res["embedding"] # [0.33, 0.62, 0.19, ...]
 ```
 
----
-
-#### Generate embedding with prefix
-
-```python
-# TODO
-```
+<!-- footer: "More code: https://github.com/rti/barebone-rag/blob/main/models.py" -->
 
 ---
 
@@ -137,6 +129,7 @@ _Scalable, Low-latency and Hybrid-enabled Vector Search in Postgres._
 A PostgreSQL extension written in Rust.
 
 <!-- TODO: what is hybrid-enabled https://pgvecto-rs-docs-git-fork-gaocegege-hybrid-tensorchord.vercel.app/use-cases/hybrid-search.html -->
+<!-- footer: "" -->
 
 ---
 
@@ -147,16 +140,18 @@ A PostgreSQL extension written in Rust.
 | PostgreSQL  | ✅ PostgreSQL License |
 | pgvector.rs | ✅ Apache-2.0         |
 
+<!-- footer: "Find more options here: https://ann-benchmarks.com/" -->
+
 ---
 
 # Vector Database Implementation
 
-#### Create PostgreSQL table using vecto.rs
+#### Create PostgreSQL table using pgvecto.rs
 
 ```sql
 CREATE EXTENSION vectors;
-CREATE TABLE IF NOT EXISTS chunks (
-  id SERIAL PRIMARY KEY,
+
+CREATE TABLE chunks (
   text TEXT NOT NULL,
   embedding VECTOR( 384 ) NOT NULL
 );
@@ -165,10 +160,12 @@ CREATE TABLE IF NOT EXISTS chunks (
 #### Find most similar chunks
 
 ```sql
-SELECT id, text FROM chunks
+SELECT text FROM chunks
   ORDER BY embedding <-> [0.33, 0.62, 0.19, ...]
   LIMIT 5;
 ```
+
+<!-- footer: "More code: https://github.com/rti/barebone-rag/blob/main/postgres.py" -->
 
 ---
 
@@ -176,6 +173,8 @@ SELECT id, text FROM chunks
 
 - Find matching sources ▶ **Semantic Search**
 - Generate Response ▶ **Large Language Model (LLM) Inference**
+
+<!-- footer: "" -->
 
 ---
 
@@ -218,6 +217,8 @@ SELECT id, text FROM chunks
 | [OpenChat 7b 3.5](https://huggingface.co/openchat/openchat-3.5-0106)                   | ✅ Apache-2.0   | ⛔             | ✅             |
 | [Cohere Command-R 35b](https://huggingface.co/CohereForAI/c4ai-command-r-v01)          | ✅ CC-BY-NC 4.0 | ⛔             | ⛔             |
 | [Stability.AI StableLM2 1.6b](https://huggingface.co/stabilityai/stablelm-2-1_6b-chat) | ⛔ Custom       | ✅             | ✅             |
+| [Apple ELM](https://elm)                                                               |                 |                |                |
+| [Microsoft Phi-3](https://)                                                            |                 |                |                |
 
 <!-- TODO: apple models -->
 <!-- TODO: microsoft phi 3 -->
@@ -229,20 +230,20 @@ SELECT id, text FROM chunks
 
 # Famous LLMs with "free" weights
 
-| Model Name                                                           | License         | Pre Train Data | Fine Tune Data |
-| -------------------------------------------------------------------- | --------------- | -------------- | -------------- | --- | --- |
-| [Meta Llama 3 8b](https://huggingface.co/meta-llama/Meta-Llama-3-8B) | ⛔ Custom       | ⛔             | ⛔             |
-| [Google Gemma 1.1 7b](https://huggingface.co/google/gemma-1.1-7b-it) | ⛔ Custom       | ⛔             | ⛔             |
-| [Alibaba Qwen 1.5 7b](https://huggingface.co/Qwen/Qwen1.5-7B)        | ⛔ Custom       | ⛔             | ⛔             |
-| <!--                                                                 | Microsoft Phi 3 | TBD            |                |     | --> |
+| Model Name                                                           | License   | Pre Train Data | Fine Tune Data |
+| -------------------------------------------------------------------- | --------- | -------------- | -------------- |
+| [Meta Llama 3 8b](https://huggingface.co/meta-llama/Meta-Llama-3-8B) | ⛔ Custom | ⛔             | ⛔             |
+| [Google Gemma 1.1 7b](https://huggingface.co/google/gemma-1.1-7b-it) | ⛔ Custom | ⛔             | ⛔             |
+| [Alibaba Qwen 1.5 7b](https://huggingface.co/Qwen/Qwen1.5-7B)        | ⛔ Custom | ⛔             | ⛔             |
 
 ---
 
 # LLMs with Openly Licensed Datasets
 
 - [Allan AI OLMo](https://huggingface.co/allenai/OLMo-7B) based on the [Dolma dataset](https://huggingface.co/datasets/allenai/dolma)
-- [LumiOpen Viking](https://huggingface.co/LumiOpen/Viking-7B)
-- [HuggingFace StarChat2](https://huggingface.co/HuggingFaceH4/starchat2-15b-v0.1)
+- [LumiOpen Viking](https://huggingface.co/LumiOpen/Viking-7B) built on [Lumi Supercomputer](https://www.lumi-supercomputer.eu/)
+- [HuggingFace StarChat2](https://huggingface.co/HuggingFaceH4/starchat2-15b-v0.1) focussed on code
+- [OpenGPT-X](https://opengpt-x.de/en/project/) EU funded
 
 ---
 
@@ -260,6 +261,7 @@ res = ollama.chat(
 )
 res["message"]["content"] # "The given text..."
 ```
+<!-- footer: "More code: https://github.com/rti/barebone-rag/blob/main/models.py" -->
 
 ---
 
@@ -267,5 +269,7 @@ res["message"]["content"] # "The given text..."
 
 - ✅ Almost all components are available with OSI approved licenses
 - ✅ Different hardware platforms supported
-- ⏳ Fully Open Source LLMs are not there yet
-- 👀 Interesting developments ongoing
+- ⏳ Fully Open Source LLMs are not really there yet
+- 🙏 Interesting developments ongoing
+
+<!-- footer: "" -->
