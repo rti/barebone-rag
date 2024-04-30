@@ -43,7 +43,6 @@ pip install lxml
 pip install ollama
 pip install psycopg[binary]
 pip install tqdm
-pip install tqdm
 ```
 
 or
