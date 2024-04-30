@@ -1,41 +1,40 @@
 # Semantic Search and RAG on a FOSS stack
 
 ## Slides
-[rti.github.io/barebone-rag/slides.html](https://rti.github.io/barebone-rag/slides.html)
+
+➡️ [rti.github.io/barebone-rag/slides.html](https://rti.github.io/barebone-rag/slides.html)
 
 ## Quickstart
 
 Required software:
+
 - Docker Engine
-- Docker Compose
-
-
+- Docker Compose V2
 
 ### Start the stack
 ```
-docker compose up --build
+docker compose up --build --wait
 ```
 
-### Import a MediaWiki Dump
+### Import the goodwiki dataset
 
-Will import from `./dump.xml`.
+Download a goodwiki dump from huggingface https://huggingface.co/datasets/euirim/goodwiki ([direct link](https://huggingface.co/datasets/euirim/goodwiki/resolve/main/09_04_2023_v1.parquet?download=true))
+
+Rename the file to `goodwiki.parquet` and run
 ```
 docker compose run --build app import_dump.py
 ```
-This will take some time. On a 12th gen Intel without GPU importing a full dump from mediawiki.org took about 4h.
+This will take some time. But you can start querying already while it's running.
 
-### Generate the slides
-```
-marp-cli --watch slides.md
-```
-Or, with nix-wrap:
+### Start the REPL to query the dataset
 
 ```
-wrap -n nix run nixpkgs#marp-cli -- --watch slides.md
+docker compose run --build app repl.py
 ```
-
 ## Development
+
 ### Python dependencies
+
 ```
 pip install beautifulsoup4
 pip install black
@@ -47,7 +46,19 @@ pip install tqdm
 
 or
 
-
 ```
 pip install -r requirements.txt
 ```
+
+## Generate the slides
+
+```
+marp-cli --watch slides.md
+```
+
+Or, with [nix-wrap](https://github.com/rti/nixwrap):
+
+```
+wrap -n nix run nixpkgs#marp-cli -- --watch slides.md
+```
+
