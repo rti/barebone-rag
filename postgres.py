@@ -6,6 +6,23 @@ from dataclasses import dataclass
 _db: psycopg.Connection | None = None
 
 
+@dataclass
+class Page:
+    id: int
+    title: str
+    description: str
+    text: str
+
+
+@dataclass
+class Chunk:
+    id: int
+    pageId: int
+    title: str
+    description: str
+    text: str
+
+
 def get_connection() -> psycopg.Connection:
     global _db
     if not _db:
@@ -50,19 +67,11 @@ def init(embeddingLength: int):
     db.commit()
 
 
-@dataclass
-class Chunk:
-    id: int
-    pageId: int
-    title: str
-    description: str
-    text: str
-
-
-def get_similar_chunks_with_rank(
+def get_similar_chunks_with_distance(
     embeddingString: str, limit=5
 ) -> List[Tuple[Chunk, float]]:
-    """<-> in pgvecto.rs uses squared euclidean distance as metric"""
+    """<-> in pgvecto.rs is squared euclidean distance as metric"""
+
     cur = get_connection().cursor()
     cur.execute(
         """
@@ -111,14 +120,6 @@ def get_random_chunks(limit=5) -> List[Chunk]:
         Chunk(id=r[0], pageId=r[1], title=r[2], description=r[3], text=r[4])
         for r in res
     ]
-
-
-@dataclass
-class Page:
-    id: int
-    title: str
-    description: str
-    text: str
 
 
 def get_pages(limit=10) -> List[Page]:

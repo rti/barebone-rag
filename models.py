@@ -5,11 +5,7 @@ from typing import List
 _client_embedding = None
 _client_chat = None
 
-# embeddingsModel = "all-minilm" # 384 dimensional embeddings model - apache-2.0
-# embeddingsModel = "mxbai-embed-large" # 1024 dimensional embeddings model - apache-2.0
-# embeddingsModel = "znbang/bge:large-en-v1.5-f16" # 1024 dimensoinal embeddings model - MIT
-
-embeddingsModel = "nomic-embed-text"  # 768 dimensional embeddings model - apache-2.0
+embeddingsModel = "nomic-embed-text"
 
 
 class EmbeddingPrefix(enum.Enum):
@@ -18,8 +14,8 @@ class EmbeddingPrefix(enum.Enum):
     NONE = ""
 
 
-# chatModel = "mistral:v0.2"
-chatModel = "zephyr:7b-beta"
+chatModel = "mistral:v0.2"
+# chatModel = "zephyr:7b-beta"
 # chatModel = "openchat:7b-v3.5-0106"
 # chatModel = "qwen:0.5b"
 # chatModel = "gemma:7b-v1.1"
@@ -76,16 +72,4 @@ def chat(
 
     if stream:
         return res
-    return res["message"]["content"]  # type: ignore
-
-
-# def chat_stream(input: str, system: str = "You are a helpful assistant."):
-#     client = get_connection_chat()
-#     return client.chat(
-#         model=chatModel,
-#         messages=[
-#             {"role": "system", "content": system},
-#             {"role": "user", "content": input},
-#         ],
-#         stream=True,
-#     )
+    return res["message"]["content"]  # type: ignore # ollama gets something wrong here
