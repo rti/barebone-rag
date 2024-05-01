@@ -7,7 +7,7 @@ services:
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
       OLLAMA_MODELS: /var/lib/ollama/models
-      # TODO: keep model alive
+      OLLAMA_KEEP_ALIVE: -1 # do not unload models
 
     volumes:
       - ollama-models:/var/lib/ollama/models
@@ -45,7 +45,7 @@ services:
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
       OLLAMA_MODELS: /var/lib/ollama/models
-      # TODO: keep model alive
+      OLLAMA_KEEP_ALIVE: -1 # do not unload models
 
     volumes:
       - ollama-models:/var/lib/ollama/models
