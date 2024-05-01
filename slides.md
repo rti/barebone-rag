@@ -264,6 +264,7 @@ _PT: pre-training - FT: fine tuning_
 # Conclusion
 
 - ✅ Almost all software components are available with OSI approved licenses
+- ✅ ROCm works and people are using it
 - ❓ Definition of open source models unclear
 - 👀 Identifying truly open source models is complicated
 - ⏳ Interesting developments ongoing
