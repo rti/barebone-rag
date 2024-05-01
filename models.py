@@ -7,7 +7,13 @@ _client_chat = None
 
 embeddingsModel = "nomic-embed-text"
 
+# TODO: adjust EmbeddingPrefix when enabling other models
+# embeddingsModel = "all-minilm"
+# embeddingsModel = "mxbai-embed-large"
+# embeddingsModel = "znbang/bge:large-en-v1.5-f16"
 
+
+# Note: prefixes specific to nomic-embed-text
 class EmbeddingPrefix(enum.Enum):
     DOCUMENT = "search_document: "
     QUERY = "search_query: "
@@ -17,11 +23,13 @@ class EmbeddingPrefix(enum.Enum):
 chatModel = "mistral:v0.2"
 # chatModel = "zephyr:7b-beta"
 # chatModel = "openchat:7b-v3.5-0106"
-# chatModel = "qwen:0.5b"
-# chatModel = "gemma:7b-v1.1"
-# chatModel = "gemma:2b-v1.1"
 # chatModel = "stablelm2:1.6b"
 # chatModel = "command-r:v0.1"
+# chatModel = "phi3:mini"
+# chatModel = "llama3:8b"
+# chatModel = "gemma:7b-v1.1"
+# chatModel = "gemma:2b-v1.1"
+# chatModel = "qwen:0.5b"
 
 
 def get_connection_embedding():
