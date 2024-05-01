@@ -40,6 +40,28 @@ def print_results(chunks_with_distances):
         print()
 
 
+def print_llm_stream(stream):
+    chars = 0
+
+    print()
+    for c in stream:
+        chunk_of_text: str = c["message"]["content"]
+
+        if "\n" in chunk_of_text:
+            chars = 0
+
+        if chars > 72 and " " in chunk_of_text:
+            split = chunk_of_text.index(" ")
+            chunk_of_text = f"{chunk_of_text[:split]}\n{chunk_of_text[split:].lstrip()}"
+            chars = 0
+
+        chars += len(chunk_of_text)
+
+        print(chunk_of_text, end="", flush=True)
+
+    print()
+
+
 def get_sys_prompt():
     return """
 You are a powerful AI trained to help people. You are augmented by a context
@@ -74,28 +96,6 @@ Respond to the following query: {query}.
 """
 
 
-def print_chatbot(stream):
-    chars = 0
-
-    print()
-    for c in stream:
-        chunk_of_text: str = c["message"]["content"]
-
-        if "\n" in chunk_of_text:
-            chars = 0
-
-        if chars > 79 and " " in chunk_of_text:
-            split = chunk_of_text.index(" ")
-            chunk_of_text = f"{chunk_of_text[:split]}\n{chunk_of_text[split:].lstrip()}"
-            chars = 0
-
-        chars += len(chunk_of_text)
-
-        print(chunk_of_text, end="", flush=True)
-
-    print()
-
-
 def rag(query, number_of_documents=5):
     emb = models.embedding_string(query, models.EmbeddingPrefix.QUERY)
     chunks_with_distances = postgres.get_similar_chunks_with_distance(
@@ -112,7 +112,7 @@ def rag(query, number_of_documents=5):
 
     stream = models.chat(input=user_prompt, system=[sys_prompt], stream=True)
 
-    print_chatbot(stream)
+    print_llm_stream(stream)
 
 
 if __name__ == "__main__":
