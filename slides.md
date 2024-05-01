@@ -3,20 +3,17 @@ title: Semantic Search and RAG on a FOSS stack
 author: Robert Timm
 ---
 
-<!-- footer: Wikimedia Hackathon 2024 Tallinn | Robert Timm | <robert.timm@wikimedia.de> -->
-
-# <!-- fit --> Semantic Search and RAG on a FOSS stack
-
----
-
-<!-- footer: "" -->
+<!-- footer: -->
 
 ![bg right](./slides_code_qrcode.png)
 
+# Semantic Search and RAG on a FOSS stack
+
+Wikimedia Hackathon Tallinn 2024
+
 ### [github.com/rti/barebone-rag](https://github.com/rti/barebone-rag)
 
-- Slides
-- Example code
+Robert Timm <robert.timm@wikimedia.de>
 
 ---
 
@@ -198,55 +195,6 @@ SELECT text FROM chunks
 
 ---
 
-# Large Language Models - open source?
-
-- What is the source of a language model?
-  - Pre training data
-  - Fine tuning data
-  - Training code
-  - Weights
-
----
-
-# LLMs with Openly Licensed Weights
-
-|                                                                                        | License         | Pre Train Data | Fine Tune Data |
-| -------------------------------------------------------------------------------------- | --------------- | -------------- | -------------- |
-| [Mistral 0.2 7b](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)            | ✅ Apache-2.0   | ⛔             | ⛔             |
-| [HF Zephyr 7b beta](https://huggingface.co/HuggingFaceH4/zephyr-7b-beta)               | ✅ MIT          | ⛔             | ✅             |
-| [OpenChat 7b 3.5](https://huggingface.co/openchat/openchat-3.5-0106)                   | ✅ Apache-2.0   | ⛔             | ✅             |
-| [Cohere Command-R 35b](https://huggingface.co/CohereForAI/c4ai-command-r-v01)          | ✅ CC-BY-NC 4.0 | ⛔             | ⛔             |
-| [Stability.AI StableLM2 1.6b](https://huggingface.co/stabilityai/stablelm-2-1_6b-chat) | ⛔ Custom       | ✅             | ✅             |
-| [Apple ELM](https://elm)                                                               |                 |                |                |
-| [Microsoft Phi-3](https://)                                                            |                 |                |                |
-
-<!-- TODO: apple models -->
-<!-- TODO: microsoft phi 3 -->
-<!-- footer: "Find more LLMs here: https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" -->
-
----
-
-<!-- footer: "" -->
-
-# Famous LLMs with "free" weights
-
-| Model Name                                                           | License   | Pre Train Data | Fine Tune Data |
-| -------------------------------------------------------------------- | --------- | -------------- | -------------- |
-| [Meta Llama 3 8b](https://huggingface.co/meta-llama/Meta-Llama-3-8B) | ⛔ Custom | ⛔             | ⛔             |
-| [Google Gemma 1.1 7b](https://huggingface.co/google/gemma-1.1-7b-it) | ⛔ Custom | ⛔             | ⛔             |
-| [Alibaba Qwen 1.5 7b](https://huggingface.co/Qwen/Qwen1.5-7B)        | ⛔ Custom | ⛔             | ⛔             |
-
----
-
-# LLMs with Openly Licensed Datasets
-
-- [Allan AI OLMo](https://huggingface.co/allenai/OLMo-7B) based on the [Dolma dataset](https://huggingface.co/datasets/allenai/dolma)
-- [LumiOpen Viking](https://huggingface.co/LumiOpen/Viking-7B) built on [Lumi Supercomputer](https://www.lumi-supercomputer.eu/)
-- [HuggingFace StarChat2](https://huggingface.co/HuggingFaceH4/starchat2-15b-v0.1) focussed on code
-- [OpenGPT-X](https://opengpt-x.de/en/project/) EU funded
-
----
-
 # LLM Inference Implementation
 
 Generate a text based on a prompt
@@ -261,15 +209,63 @@ res = ollama.chat(
 )
 res["message"]["content"] # "The given text..."
 ```
+
 <!-- footer: "More code: https://github.com/rti/barebone-rag/blob/main/models.py" -->
+
+---
+
+# Large Language Models Licensing
+
+- Weights (binary)
+- Pre training (source)
+- Fine tuning data (source)
+- Training code (build scripts)
+
+---
+
+# OSI - Open Source AI Initiative
+
+- Intends to define Open Source models
+- Defines which parts need to have [OSD](https://opensource.org/osd)-compliant licenses
+- Draft, Release planned for October 2024
+- [Latest draft (April 2024)](https://opensource.org/deepdive/drafts/the-open-source-ai-definition-draft-v-0-0-8)
+  - Marks training data sets as optional
+  - But requires data characteristics, labeling procedures, etc.
+
+---
+
+# LLMs with Openly Licensed Weights
+
+|                                                                                      | OSI Weights   | PT Data | FT Data | Code |
+| ------------------------------------------------------------------------------------ | ------------- | ------- | ------- | ---- |
+| [Mistral 0.2 7b](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)          | ✅ Apache-2.0 | ⛔      | ⛔      | ⛔   |
+| [HF Zephyr 7b beta](https://huggingface.co/HuggingFaceH4/zephyr-7b-beta)             | ✅ MIT        | ⛔      | ✅      | ✅   |
+| [Microsoft Phi-3 Mini 3.8b](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) | ✅ MIT        | ⛔      | ⛔      | ⛔   |
+| [Apple ELM 3b](https://huggingface.co/apple/OpenELM)                                 | ⛔❓ASCL      | ✅      | ✅      | ✅   |
+| [Meta Llama 3 8b](https://huggingface.co/meta-llama/Meta-Llama-3-8B)                 | ⛔ Custom     | ⛔      | ⛔      | ⛔   |
+| [Google Gemma 1.1 7b](https://huggingface.co/google/gemma-1.1-7b-it)                 | ⛔ Custom     | ⛔      | ⛔      | ⛔   |
+
+_PT: pre-training - FT: fine tuning_
+
+<!-- footer: "Find more LLMs here: https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" -->
+
+---
+
+# Open Source LLM Projects
+
+- [Bloom](<https://en.wikipedia.org/wiki/BLOOM_(language_model)>) (2022), BigScience RAIL License v1.0, not SOTA, not OSD
+- [Allan AI OLMo](https://huggingface.co/allenai/OLMo-7B) based on the [Dolma dataset](https://huggingface.co/datasets/allenai/dolma)
+- [LumiOpen Viking](https://huggingface.co/LumiOpen/Viking-7B) built on [Lumi Supercomputer](https://www.lumi-supercomputer.eu/)
+- [HuggingFace StarChat2](https://huggingface.co/HuggingFaceH4/starchat2-15b-v0.1) focussed on code
+- [OpenGPT-X](https://opengpt-x.de/en/project/) EU funded
 
 ---
 
 # Conclusion
 
-- ✅ Almost all components are available with OSI approved licenses
-- ✅ Different hardware platforms supported
-- ⏳ Fully Open Source LLMs are not really there yet
-- 🙏 Interesting developments ongoing
+- ✅ Almost all software components are available with OSI approved licenses
+- ❓ Definition of open source models unclear
+- 👀 Identifying truly open source models is complicated
+- ⏳ Interesting developments ongoing
 
 <!-- footer: "" -->
