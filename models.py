@@ -67,6 +67,7 @@ def chat(
     res = client.chat(
         model=chatModel,
         messages=system_messages + user_message,
+        options={"temperature": 0.0},
         stream=stream,
     )
 
