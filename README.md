@@ -22,14 +22,14 @@ Download a goodwiki dump from huggingface https://huggingface.co/datasets/euirim
 
 Rename the file to `goodwiki.parquet` and run
 ```
-docker compose run --build app import_dump.py
+docker compose run app python import_dump.py
 ```
 This will take some time. But you can start querying already while it's running.
 
 ### Start the REPL to query the dataset
 
 ```
-docker compose run --build app repl.py
+docker compose run app python repl.py
 ```
 ## Development
 

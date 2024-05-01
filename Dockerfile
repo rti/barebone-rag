@@ -4,7 +4,4 @@ WORKDIR /workspace
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# ENTRYPOINT [ "python" ]
-# CMD [ "main.py" ]
-
 CMD ["sleep", "infinity"]
