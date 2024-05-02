@@ -22,7 +22,7 @@ Robert Timm <robert.timm@wikimedia.de>
 
 ## Semantic Search
 
-Find objects with similar meaning based on a query.
+Given a query, find texts with a meaning similar.
 
 ## Retrieval Augmented Generation (RAG)
 
@@ -33,6 +33,11 @@ Create texts based on information loaded from external sources.
 All software components are released under [OSI approved licenses](https://opensource.org/licenses).
 
 ---
+
+# <!-- fit --> Demo Time
+
+---
+
 
 # GPU stacks
 
@@ -150,7 +155,7 @@ CREATE EXTENSION vectors;
 
 CREATE TABLE chunks (
   text TEXT NOT NULL,
-  embedding VECTOR( 384 ) NOT NULL
+  embedding VECTOR( 768 ) NOT NULL
 );
 ```
 
@@ -200,7 +205,7 @@ SELECT text FROM chunks
 Generate a text based on a prompt
 
 ```python
-import ollama
+import ollama # pip install ollama
 
 res = ollama.chat(
     model="zephyr:7b-beta",
@@ -214,7 +219,7 @@ res["message"]["content"] # "The given text..."
 
 ---
 
-# Large Language Models Licensing
+# Large Language Model Building Blocks
 
 - Weights (binary)
 - Pre training (source)
@@ -266,7 +271,7 @@ _PT: pre-training - FT: fine tuning_
 - ✅ Almost all software components are available with OSI approved licenses
 - ✅ ROCm works and people are using it
 - ❓ Definition of open source models unclear
-- 👀 Identifying truly open source models is complicated
+- 🤔 Identifying truly open source models is complicated
 - ⏳ Interesting developments ongoing
 
 <!-- footer: "" -->
